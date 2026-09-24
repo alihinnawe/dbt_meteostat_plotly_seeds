@@ -1,4 +1,3 @@
-```yaml
 version: 2
 
 sources:
@@ -14,4 +13,3 @@ sources:
       - name: flights
       - name: airports
       - name: regions
-```
