@@ -1,1 +1,1 @@
-SELECT * FROM airports
+SELECT * FROM {{source('flights_data', 'airports')}}
