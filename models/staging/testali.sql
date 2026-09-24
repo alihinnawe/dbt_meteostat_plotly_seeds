@@ -1,1 +1,1 @@
-select * from airports;
+select * from airports
