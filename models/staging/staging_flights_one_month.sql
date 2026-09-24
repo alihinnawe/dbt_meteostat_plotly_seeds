@@ -6,3 +6,5 @@
         WHERE DATE_PART('month', flight_date) = 1 
     )
     SELECT * FROM flights_one_month
+    -- we need it as a view
+    
