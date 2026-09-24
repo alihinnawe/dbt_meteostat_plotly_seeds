@@ -1,4 +1,4 @@
-{% macro cleanup_orphaned_models(schema_name) %}
+{% macro find_orphaned_tables(schema_name) %}
 
     {% set query %}
         SELECT table_name
@@ -15,35 +15,28 @@
 
         {% for table_name in db_tables %}
 
-            {% set is_dbt_model = false %}
+            {% set found = false %}
 
             {% for node in graph.nodes.values() %}
 
                 {% if node.resource_type == 'model'
                       and node.name == table_name %}
 
-                    {% set is_dbt_model = true %}
+                    {% set found = true %}
 
                 {% endif %}
 
             {% endfor %}
 
-            {% if not is_dbt_model %}
+            {% if not found %}
 
                 {{ log(
-                    'Dropping orphaned table: '
+                    'ORPHAN FOUND: '
                     ~ schema_name
                     ~ '.'
                     ~ table_name,
                     info=True
                 ) }}
-
-                {% set drop_sql %}
-                    DROP TABLE IF EXISTS
-                    "{{ schema_name }}"."{{ table_name }}"
-                {% endset %}
-
-                {% do run_query(drop_sql) %}
 
             {% endif %}
 
