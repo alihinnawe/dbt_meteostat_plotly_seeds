@@ -11,41 +11,27 @@
 
     {% if execute %}
 
-        {% set db_tables = results.columns[0].values() %}
+        {{ log('=== DATABASE TABLES ===', info=True) }}
 
-        {% for table_name in db_tables %}
+        {% for row in results.rows %}
+            {{ log('DB TABLE: ' ~ row[0], info=True) }}
+        {% endfor %}
 
-            {% set found = false %}
+        {{ log('=== DBT MODELS ===', info=True) }}
 
-            {# Check whether the table still corresponds to a dbt model #}
-            {% for node in graph.nodes.values() %}
+        {% for node in graph.nodes.values() %}
 
-                {% if node.resource_type == 'model'
-                      and node.name == table_name %}
-
-                    {% set found = true %}
-
-                {% endif %}
-
-            {% endfor %}
-
-            {# Drop tables that no longer have a dbt model #}
-            {% if not found %}
+            {% if node.resource_type == 'model' %}
 
                 {{ log(
-                    'DROPPING ORPHANED TABLE: '
-                    ~ schema_name
-                    ~ '.'
-                    ~ table_name,
+                    'DBT MODEL: '
+                    ~ node.name
+                    ~ ' | schema='
+                    ~ node.schema
+                    ~ ' | alias='
+                    ~ node.alias,
                     info=True
                 ) }}
-
-                {% set drop_sql %}
-                    DROP TABLE IF EXISTS
-                    "{{ schema_name }}"."{{ table_name }}"
-                {% endset %}
-
-                {% do run_query(drop_sql) %}
 
             {% endif %}
 
