@@ -1,32 +1,54 @@
 {% macro cleanup_orphaned_models(schema_name) %}
 
-    {% set relations = adapter.list_relations_without_caching(
-        database=target.database,
-        schema=schema_name
-    ) %}
+    {% set query %}
+        SELECT table_name
+        FROM information_schema.tables
+        WHERE table_schema = '{{ schema_name }}'
+          AND table_type = 'BASE TABLE'
+    {% endset %}
 
-    {% set dbt_models = graph.nodes.values()
-        | selectattr("resource_type", "equalto", "model")
-        | map(attribute="name")
-        | list
-    %}
+    {% set results = run_query(query) %}
 
-    {% for relation in relations %}
+    {% if execute %}
 
-        {% if relation.identifier not in dbt_models %}
+        {% set db_tables = results.columns[0].values() %}
 
-            {{ log(
-                "Dropping orphaned relation: "
-                ~ relation.schema
-                ~ "."
-                ~ relation.identifier,
-                info=True
-            ) }}
+        {% for table_name in db_tables %}
 
-            {% do adapter.drop_relation(relation) %}
+            {% set is_dbt_model = false %}
 
-        {% endif %}
+            {% for node in graph.nodes.values() %}
 
-    {% endfor %}
+                {% if node.resource_type == 'model'
+                      and node.name == table_name %}
+
+                    {% set is_dbt_model = true %}
+
+                {% endif %}
+
+            {% endfor %}
+
+            {% if not is_dbt_model %}
+
+                {{ log(
+                    'Dropping orphaned table: '
+                    ~ schema_name
+                    ~ '.'
+                    ~ table_name,
+                    info=True
+                ) }}
+
+                {% set drop_sql %}
+                    DROP TABLE IF EXISTS
+                    "{{ schema_name }}"."{{ table_name }}"
+                {% endset %}
+
+                {% do run_query(drop_sql) %}
+
+            {% endif %}
+
+        {% endfor %}
+
+    {% endif %}
 
 {% endmacro %}
