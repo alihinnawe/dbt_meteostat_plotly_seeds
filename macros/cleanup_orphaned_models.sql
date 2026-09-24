@@ -17,6 +17,7 @@
 
             {% set found = false %}
 
+            {# Check whether this database table belongs to a current dbt model #}
             {% for node in graph.nodes.values() %}
 
                 {% if node.resource_type == 'model'
@@ -28,15 +29,23 @@
 
             {% endfor %}
 
+            {# If no dbt model exists anymore, drop the table #}
             {% if not found %}
 
                 {{ log(
-                    'ORPHAN FOUND: '
+                    'DROPPING ORPHANED TABLE: '
                     ~ schema_name
                     ~ '.'
                     ~ table_name,
                     info=True
                 ) }}
+
+                {% set drop_sql %}
+                    DROP TABLE IF EXISTS
+                    "{{ schema_name }}"."{{ table_name }}"
+                {% endset %}
+
+                {% do run_query(drop_sql) %}
 
             {% endif %}
 
