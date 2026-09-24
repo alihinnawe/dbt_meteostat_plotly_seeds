@@ -1,4 +1,4 @@
-{% macro find_orphaned_tables(schema_name) %}
+{% macro cleanup_orphaned_models(schema_name) %}
 
     {% set query %}
         SELECT table_name
@@ -17,7 +17,7 @@
 
             {% set found = false %}
 
-            {# Check whether this database table belongs to a current dbt model #}
+            {# Check whether the table still corresponds to a dbt model #}
             {% for node in graph.nodes.values() %}
 
                 {% if node.resource_type == 'model'
@@ -29,7 +29,7 @@
 
             {% endfor %}
 
-            {# If no dbt model exists anymore, drop the table #}
+            {# Drop tables that no longer have a dbt model #}
             {% if not found %}
 
                 {{ log(
