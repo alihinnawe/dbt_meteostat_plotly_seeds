@@ -38,19 +38,16 @@ SELECT
     SUM(total_planned) AS total_planned_flights,
     SUM(total_cancelled) AS total_cancelled_flights,
     SUM(total_diverted) AS total_diverted_flights,
-
     ROUND(
-        SUM(total_cancelled)
-        / SUM(total_planned) * 100,
+        (SUM(total_cancelled)
+        / SUM(total_planned)) * 100,
         2
     ) AS cancellation_rate,
-
     ROUND(
-        SUM(total_diverted)
-        / SUM(total_planned) * 100,
+        (SUM(total_diverted)
+        / SUM(total_planned)) * 100,
         2
     ) AS diversion_rate,
-
     ROUND(AVG(avg_wind_speed_kmh), 2) AS avg_wind_speed_kmh
 FROM weather_impact
  
