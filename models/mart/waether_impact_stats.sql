@@ -29,7 +29,7 @@ WITH weather_impact AS (
         END AS wind_category
 
     FROM {{ref('mart_selected_faa_stats_weather')}}
-
+)
 SELECT
     wind_category,
 
@@ -52,5 +52,3 @@ SELECT
 FROM weather_impact
  
 GROUP BY wind_category
-
-
