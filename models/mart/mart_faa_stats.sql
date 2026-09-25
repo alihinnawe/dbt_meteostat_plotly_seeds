@@ -4,7 +4,7 @@ WITH departures AS (
 			,COUNT(sched_dep_time) AS dep_planned
 			,SUM(cancelled) AS dep_cancelled
 			,SUM(diverted) AS dep_diverted
-			,COUNT(arr_time) AS dep_n_flights
+			,select COUNT(*) - SUM(cancelled) AS dep_n_flights
 			-- ,COUNT(DISTINCT tail_number) AS dep_nunique_tails -- BONUS TASK
 			-- ,COUNT(DISTINCT airline) AS dep_nunique_airlines -- BONUS TASK
 	FROM {{ref('prep_flights')}} 
