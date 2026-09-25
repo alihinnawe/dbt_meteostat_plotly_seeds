@@ -1,16 +1,16 @@
 WITH departures AS ( 
-	SELECT origin AS faa
-			,COUNT(DISTINCT dest) AS nunique_to
-			,COUNT(sched_dep_time) AS dep_planned
-			,SUM(cancelled) AS dep_cancelled
-			,SUM(diverted) AS dep_diverted
-			,COUNT(*) - SUM(cancelled) AS dep_n_flights
-			-- ,COUNT(DISTINCT tail_number) AS dep_nunique_tails -- BONUS TASK
-			-- ,COUNT(DISTINCT airline) AS dep_nunique_airlines -- BONUS TASK
-	FROM {{ref('prep_flights')}} 
-	GROUP BY origin
-	ORDER BY origin
+    SELECT 
+        origin AS faa,
+        COUNT(DISTINCT dest) AS nunique_to,
+        COUNT(*) AS dep_planned,
+        SUM(cancelled) AS dep_cancelled,
+        SUM(diverted) AS dep_diverted,
+        COUNT(*) - SUM(cancelled) AS dep_n_flights
+    FROM {{ ref('prep_flights') }}
+    GROUP BY origin
+    ORDER BY origin
 ),
+
 arrivals AS (
 	SELECT dest AS faa
 			,COUNT(DISTINCT origin) AS nunique_from
