@@ -15,7 +15,7 @@ monthly_product_revenue as (
         extract(year from o.order_date) as order_year,
         extract(month from o.order_date) as order_month,
         f.product_name
-    from {{ ref('staging_orders') }} o  -- fixed typo here
+    from {{ ref('satging_orders') }} o
     join first_join_revenue_calculation f 
         on o.order_id = f.order_id
 )
