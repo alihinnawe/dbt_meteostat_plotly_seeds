@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: northwind_data
-    schema: s_alihinnawe
+    schema: northwind
     tables:
       - name: orders
       - name: order_details
