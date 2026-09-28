@@ -11,15 +11,14 @@ with first_join_revenue_calculation as (
 ),
 
 monthly_product_revenue as ( 
-    select
+    select distinct  -- added distinct to avoid needing a group by
         extract(year from o.order_date) as order_year,
         extract(month from o.order_date) as order_month,
-        f.product_name,
-        -- sum(f.raw_revenue) as total_revenue
-    from {{ ref('satging_orders') }} o
+        f.product_name
+    from {{ ref('staging_orders') }} o  -- fixed typo here
     join first_join_revenue_calculation f 
         on o.order_id = f.order_id
 )
 
 select * 
-from monthly_product_revenue
+from monthly_product_revenue;
