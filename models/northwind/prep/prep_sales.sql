@@ -21,4 +21,4 @@ monthly_product_revenue as (
 )
 
 select * 
-from monthly_product_revenue;
+from monthly_product_revenue
