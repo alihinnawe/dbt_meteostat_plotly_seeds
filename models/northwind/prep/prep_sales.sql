@@ -23,4 +23,3 @@ monthly_product_revenue as (
 
 select * 
 from monthly_product_revenue
-order by order_year desc, order_month desc, total_revenue desc
