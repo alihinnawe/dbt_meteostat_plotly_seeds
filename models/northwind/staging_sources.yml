@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: northwind
+    schema: s_alihinnawe
+    tables:
+      - name: orders
+      - name: order_details
+      - name: products
+      - name: categories
