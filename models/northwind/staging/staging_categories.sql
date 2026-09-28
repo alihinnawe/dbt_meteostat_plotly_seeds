@@ -1,5 +1,9 @@
-with staging_categories as (
-    select category_name, description from {{ source('northwind_data','categories') }}
+WITH source_categories AS (
+    SELECT
+        description,
+        category_name
+    FROM {{ source('northwind_data', 'categories') }}
 )
 
-select * from staging_categories
+SELECT *
+FROM source_categories
